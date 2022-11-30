@@ -26,6 +26,37 @@ create table cadastro (
     "data" date    
 );
 
+insert into empresa_parceira(id_empresa, nome, cnpj, setor)
+values
+      (1, 'Xdevelopers', '73.072.245/0001-06', 'Tecnologia'),
+      (2, 'Construções Jr', '74.870.473/0001-86', 'Infraestrutura'),
+      (3, 'Comes e Bebes', '09.525.761/0001-31', 'Alimentício'),
+      (4, 'Banco verde', '16.002.111/0001-77', 'Bancário'),
+      (5, 'empresa oy',	'45.002.111/0001-77', 'Comercial');
+
+insert into area(id_area, nome)
+values
+      (1, 'Webdev'),
+      (2, 'Dados'),
+      (3, 'Marketing');
+      
+insert into tecnologia(id_tecnologia, id_area, nome)
+values
+      (1, 2, 'SQL'),
+      (2, 1, 'JavaScript'),
+      (3, 3, 'CRM'),
+      (4, 2, 'Python');
+      
+insert into cadastro(id_cadastro, id_empresa, id_tecnologia, data)
+values
+       (1,1,2,'2021-08-25'),
+       (2,2,1,'2021-10-30'),
+       (3,1,4,'2021-09-07'),
+       (4,3,3,'2022-02-15'),
+       (5,4,4,'2022-04-23'),
+       (6,4,2,'2022-05-14'),
+       (7,5,3,'2022-03-13');
+
 select * from empresa_parceira;
 select * from area;
 select * from tecnologia;
@@ -67,10 +98,12 @@ group by foo.id_empresa, foo.nome having count(foo.id_area) > 0 order by count(f
 
 -- 3) Quantas empresas utilizam tecnologias da área de “Dados” atualmente? 
 
-select count(id_tecnologia) from cadastro where id_tecnologia = 1 or id_tecnologia = 4;
+select count(id_tecnologia) total_dados from cadastro where id_tecnologia = 1 or id_tecnologia = 4;
 
 -- 4) Quantas empresas utilizam tecnologias que não são da área de “Dados” atualmente?
 
-select count(id_tecnologia) from cadastro where id_tecnologia != 1 and id_tecnologia != 4;
-
-
+select total.qtd_total - total_dados.qtd_dados as empresas_sem_dados
+from
+(select count(id_tecnologia) qtd_dados from cadastro where id_tecnologia = 1 or id_tecnologia = 4) as total_dados
+cross join 
+(select count(id_empresa) qtd_total from empresa_parceira) total
